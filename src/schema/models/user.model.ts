@@ -4,7 +4,7 @@ const schema = new Schema({
   name: {
     type: String,
   },
-  pass: {
+  password: {
     type: String, 
     required: true,
   },

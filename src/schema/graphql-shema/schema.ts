@@ -11,7 +11,7 @@ const UserType = new GraphQLObjectType({
   }),
 });
 
-const Query = new GraphQLObjectType({
+const query = new GraphQLObjectType({
   name: 'Query',
   fields: {
     user: {
@@ -24,6 +24,25 @@ const Query = new GraphQLObjectType({
   },
 });
 
+const mutation = new GraphQLObjectType({
+  name: 'Mutation',
+  fields: {
+    addUser: {
+      type: UserType,
+      args: {
+        email: { type: GraphQLString },
+        password: { type: GraphQLString }
+      },
+      resolve(_parent, { email, password }) {
+        const user = new UserMongoSchema({
+          email, password
+        });
+        user.save();
+      },
+    }
+  }
+});
+
 export const queryGraphQl = new GraphQLSchema({
-  query: Query
+  query, mutation
 });
