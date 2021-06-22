@@ -1,11 +1,8 @@
 import { Schema, model } from 'mongoose';
 
 const schema = new Schema({
-  name: {
-    type: String,
-  },
   password: {
-    type: String, 
+    type: String,
     required: true,
   },
   email: {
@@ -13,6 +10,10 @@ const schema = new Schema({
     required: true,
     unique: true,
   },
+  isActivated: { type: Boolean, default: false },
+  activationLink: {
+    type: String,
+  },
 });
 
-export default model('User', schema);
+export const UserModel = model('User', schema);
