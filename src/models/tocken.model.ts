@@ -7,7 +7,7 @@ const schema = new Schema({
 
 export interface IToken {
   refreshToken: string,
-  user: any
+  user: string;
 }
 
 export default model('Tocken', schema);

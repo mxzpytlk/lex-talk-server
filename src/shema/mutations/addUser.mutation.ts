@@ -1,7 +1,7 @@
-import { GraphQLFieldConfig, GraphQLString } from "graphql";
-import { IRegister } from "../../core/data/register";
-import { UserService } from "../../services/user.service";
-import { RegisterType } from "../types/register.type";
+import { GraphQLFieldConfig, GraphQLString } from 'graphql';
+import { IRegister } from '../../core/data/register';
+import { UserService } from '../../services/user.service';
+import { RegisterType } from '../types/register.type';
 
 export const addUser: GraphQLFieldConfig<null, IRegister> = {
   type: RegisterType,

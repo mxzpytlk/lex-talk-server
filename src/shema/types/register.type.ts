@@ -1,5 +1,5 @@
-import { GraphQLObjectType, GraphQLString } from "graphql";
-import { UserType } from "./user.type";
+import { GraphQLObjectType, GraphQLString } from 'graphql';
+import { UserType } from './user.type';
 
 const JwtType = new GraphQLObjectType({
   name: 'Jwt',

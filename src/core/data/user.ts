@@ -1,5 +1,5 @@
-import { MDocument } from "../types";
-import { JSONable } from "./jsonable";
+import { MDocument } from '../types';
+import { JSONable } from './jsonable';
 
 export class User extends JSONable implements IUser {
   public email: string;

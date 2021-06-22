@@ -5,6 +5,7 @@ import { MDocument } from '../core/types';
 import TokenModel, { IToken } from '../models/tocken.model';
 
 export class TokenService {
+  // eslint-disable-next-line @typescript-eslint/ban-types
   public static generateToken(payload: string | object | Buffer): IJwt {
     const accesToken = jwt.sign(payload, config.jwtSecretAcces, { expiresIn: '30m' });
     const refreshToken = jwt.sign(payload, config.jwtSecretRefresh, { expiresIn: '30d' });
