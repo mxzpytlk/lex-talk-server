@@ -6,6 +6,7 @@ import { graphqlHTTP } from 'express-graphql';
 import cors from 'cors';
 import { queryGraphQl as schema } from './shema/schema';
 import cookieParser from 'cookie-parser';
+import router from './route/index';
 
 env.config();
 
@@ -16,6 +17,8 @@ const app: express.Application = express();
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
+
+app.use('/api', router);
 
 app.use(
   '/graphql',
