@@ -23,6 +23,7 @@
     "@types/cors": "^2.8.10",
     "@types/express": "^4.17.12",
     "@types/jsonwebtoken": "^8.5.2",
+    "@types/nodemailer": "^6.4.2",
     "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^4.28.0",
     "@typescript-eslint/parser": "^4.28.0",
@@ -47,6 +48,7 @@
     "graphql": "^15.5.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.14",
+    "nodemailer": "^6.6.2",
     "uuid": "^8.3.2"
   }
 }

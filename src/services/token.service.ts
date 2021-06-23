@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import config from '../assets/config.json';
 import { IJwt } from '../core/data/jwt';
 import { MDocument } from '../core/types';
-import TokenModel, { IToken } from '../models/tocken.model';
+import TokenModel, { IToken } from '../models/token.model';
 
 export class TokenService {
   // eslint-disable-next-line @typescript-eslint/ban-types

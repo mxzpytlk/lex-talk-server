@@ -10,4 +10,4 @@ export interface IToken {
   user: string;
 }
 
-export default model('Tocken', schema);
+export default model('Token', schema);
