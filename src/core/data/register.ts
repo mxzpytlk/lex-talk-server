@@ -1,7 +1,7 @@
 import { IJwt } from './jwt';
 import { IUser } from './user';
 
-export interface IRegisterSuccess {
+export interface IAuthSuccess {
   user: IUser;
   jwt: IJwt;
 }

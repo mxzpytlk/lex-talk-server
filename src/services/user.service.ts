@@ -4,13 +4,13 @@ import { v4 } from 'uuid';
 import { MailService } from './mail.service';
 import { TokenService } from './token.service';
 import { IUser, User } from '../core/data/user';
-import { IRegisterSuccess } from '../core/data/register';
+import { IAuthSuccess } from '../core/data/register';
 import config from '../assets/config.json';
 import { MDocument } from '../core/types';
 import { ApiError } from '../exceptions/api.error';
 
 export class UserService {
-  public static async register(email: string, password: string): Promise<IRegisterSuccess> {
+  public static async register(email: string, password: string): Promise<IAuthSuccess> {
     const candidate = await UserModel.findOne({ email });
     if (candidate) {
       throw ApiError.BadRequest('This email is already used');
@@ -37,5 +37,20 @@ export class UserService {
     }
     user.isActivated = true;
     await user.save();
+
+  }
+  public static async login(email: string, password: string): Promise<IAuthSuccess> {
+    const user: MDocument<IUser> = await UserModel.findOne({ email });
+
+    if (!user) {
+      throw ApiError.BadRequest('No user with such email');
+    }
+    const isPathEquals = await bcrypt.compare(password, user.password);
+    if (!isPathEquals) {
+      throw ApiError.BadRequest('Incorrect password');
+    }const userData = new User(user);
+    const jwt = TokenService.generateToken(userData.toJSON());
+    await TokenService.saveToken(userData.id, jwt.refreshToken);
+    return { user: userData, jwt };
   }
 }
