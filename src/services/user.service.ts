@@ -7,12 +7,13 @@ import { IUser, User } from '../core/data/user';
 import { IRegisterSuccess } from '../core/data/register';
 import config from '../assets/config.json';
 import { MDocument } from '../core/types';
+import { ApiError } from '../exceptions/api.error';
 
 export class UserService {
   public static async register(email: string, password: string): Promise<IRegisterSuccess> {
     const candidate = await UserModel.findOne({ email });
     if (candidate) {
-      throw Error('This email is already used');
+      throw ApiError.BadRequest('This email is already used');
     }
     const hashPass = await bcrypt.hash(password, 3);
     const activationLink = v4();
@@ -32,7 +33,7 @@ export class UserService {
     const user: MDocument<IUser> = await UserModel.findOne({ activationLink });
 
     if (!user) {
-      throw new Error('Incorrect activation link');
+      throw ApiError.BadRequest('Incorrect activation link');
     }
     user.isActivated = true;
     await user.save();

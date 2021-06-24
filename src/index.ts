@@ -7,6 +7,7 @@ import cors from 'cors';
 import { queryGraphQl as schema } from './shema/schema';
 import cookieParser from 'cookie-parser';
 import router from './route/index';
+import { handleError } from './midlewares/error.middleware';
 
 env.config();
 
@@ -27,6 +28,8 @@ app.use(
     schema,
   })
 );
+
+app.use(handleError);
 
 async function start(): Promise<void> {
   try {

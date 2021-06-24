@@ -1,5 +1,6 @@
 import { Response } from 'express';
 
 export interface IConnection {
-  res: Response
+  res: Response;
+  next: (object: unknown) => void;
 }

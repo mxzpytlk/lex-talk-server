@@ -3,10 +3,14 @@ import { UserService } from '../services/user.service';
 import config from '../assets/config.json';
 
 export class UserController {
-  public static async activate(req: Request, res: Response): Promise<void> {
-    const activationLink = (req.params as unknown as IActivate).link;
-    await UserService.activate(activationLink);
-    res.redirect(config.clientUrl);
+  public static async activate(req: Request, res: Response, next: (object: unknown) => void): Promise<void> {
+    try {
+      const activationLink = (req.params as unknown as IActivate).link;
+      await UserService.activate(activationLink);
+      res.redirect(config.clientUrl);
+    } catch (e) {
+      next(e);
+    }
   }
 }
 
