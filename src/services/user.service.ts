@@ -7,7 +7,7 @@ import { IUser, User } from '../core/data/user';
 import { IAuthSuccess } from '../core/data/register';
 import config from '../assets/config.json';
 import { MDocument } from '../core/types';
-import { ApiError } from '../exceptions/api.error';
+import { ApiError } from '../core/exceptions/api.error';
 
 export class UserService {
   public static async register(email: string, password: string): Promise<IAuthSuccess> {
@@ -52,5 +52,9 @@ export class UserService {
     const jwt = TokenService.generateToken(userData.toJSON());
     await TokenService.saveToken(userData.id, jwt.refreshToken);
     return { user: userData, jwt };
+  }
+
+  public static async logaut(refreshToken: string): Promise<void> {
+    await TokenService.removeToken(refreshToken);
   }
 }

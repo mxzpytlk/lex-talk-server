@@ -1,9 +1,10 @@
 import { GraphQLFieldConfig, GraphQLString } from 'graphql';
 import { IConnection } from '../../core/data/connection';
 import { daysToMilisecond } from '../../core/utils/date.utils';
-import { ApiError } from '../../exceptions/api.error';
+import { ApiError } from '../../core/exceptions/api.error';
 import { UserService } from '../../services/user.service';
 import { RegisterType } from '../types/register.type';
+import { CookieKey } from '../../core/enums/cookie-key';
 
 export const addUser: GraphQLFieldConfig<null, IConnection> = {
   type: RegisterType,
@@ -16,7 +17,7 @@ export const addUser: GraphQLFieldConfig<null, IConnection> = {
       throw ApiError.BadRequest('Password can not be less than 6');
     }
     const data = await UserService.register(email, password);
-    res.cookie('refreshToken', data.jwt.refreshToken, {
+    res.cookie(CookieKey.REFRESH_TOKEN, data.jwt.refreshToken, {
       maxAge: daysToMilisecond(30),
       httpOnly: true,
     });

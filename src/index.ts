@@ -19,16 +19,15 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
-app.use('/api', router);
-
-app.use(
-  '/graphql',
-  graphqlHTTP({
-    graphiql: true,
+app.use('/graphql', (req, res) => {
+  return graphqlHTTP({
     schema,
-  })
-);
+    context: { req, res },
+    graphiql: true,
+  })(req, res)
+});
 
+app.use('/api', router);
 app.use(handleError);
 
 async function start(): Promise<void> {

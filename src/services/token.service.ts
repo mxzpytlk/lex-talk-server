@@ -27,4 +27,8 @@ export class TokenService {
       throw e;
     }
   }
+
+  public  static async removeToken(refreshToken: string): Promise<void> {
+    await TokenModel.deleteOne({ refreshToken });
+  }
 }
