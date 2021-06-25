@@ -32,10 +32,10 @@ export class TokenService {
     return await TokenModel.findOne({ refreshToken });
   }
 
-  public static validateAccessToken(token: string): unknown {
+  public static validateAccessToken<T>(token: string): T {
     try {
       const userData = jwt.verify(token, config.jwtSecretAcces);
-      return userData;
+      return userData as T;
     } catch(_) {
       return null;
     }
