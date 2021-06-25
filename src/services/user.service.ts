@@ -48,7 +48,8 @@ export class UserService {
     const isPathEquals = await bcrypt.compare(password, user.password);
     if (!isPathEquals) {
       throw ApiError.BadRequest('Incorrect password');
-    }const userData = new User(user);
+    }
+    const userData = new User(user);
     const jwt = TokenService.generateToken(userData.toJSON());
     await TokenService.saveToken(userData.id, jwt.refreshToken);
     return { user: userData, jwt };
@@ -56,5 +57,21 @@ export class UserService {
 
   public static async logaut(refreshToken: string): Promise<void> {
     await TokenService.removeToken(refreshToken);
+  }
+
+  public static async refresh(refreshToken: string): Promise<IAuthSuccess> {
+    if (!refreshToken) {
+      throw ApiError.UnauthorisedError();
+    }
+    const userFromToken = TokenService.validateRefreshToken<IUser>(refreshToken);
+    const tokenFromDb = await TokenService.findToken(refreshToken);
+    if (!userFromToken || !tokenFromDb) {
+      throw ApiError.UnauthorisedError();
+    }
+    const userData = await UserModel.findById(userFromToken.id);
+    const user = new User(userData);
+    const jwt = TokenService.generateToken(user.toJSON());
+    await TokenService.saveToken(user.id, jwt.refreshToken);
+    return { user: user, jwt };
   }
 }

@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import config from '../assets/config.json';
 import { IJwt } from '../core/data/jwt';
+import { IUser } from '../core/data/user';
 import { MDocument } from '../core/types';
 import TokenModel, { IToken } from '../models/token.model';
 
@@ -13,22 +14,39 @@ export class TokenService {
   }
 
   public static async saveToken(userId: string, refreshToken: string): Promise<MDocument<IToken>> {
+    const tokenData: MDocument<IToken> = await TokenModel.findOne({ user: userId });
+    if (tokenData) {
+      tokenData.refreshToken = refreshToken;
+      return tokenData.save();
+    }
+    const token = new TokenModel({ refreshToken, user: userId });
+    await token.save();
+    return token;
+  }
+
+  public static async removeToken(refreshToken: string): Promise<void> {
+    await TokenModel.deleteOne({ refreshToken });
+  }
+
+  public static async findToken(refreshToken: string): Promise<MDocument<IToken>> {
+    return await TokenModel.findOne({ refreshToken });
+  }
+
+  public static validateAccessToken(token: string): unknown {
     try {
-      const tokenData: MDocument<IToken> = await TokenModel.findOne({ user: userId });
-      if (tokenData) {
-        tokenData.refreshToken = refreshToken;
-        return tokenData.save();
-      }
-      const token = new TokenModel({ refreshToken, user: userId });
-      await token.save();
-      return token;
-    } catch (e) {
-      console.error(e);
-      throw e;
+      const userData = jwt.verify(token, config.jwtSecretAcces);
+      return userData;
+    } catch(_) {
+      return null;
     }
   }
 
-  public  static async removeToken(refreshToken: string): Promise<void> {
-    await TokenModel.deleteOne({ refreshToken });
+  public static validateRefreshToken<T>(token: string): T {
+    try {
+      const userData = jwt.verify(token, config.jwtSecretRefresh);
+      return (userData as T);
+    } catch(_) {
+      return null;
+    }
   }
 }

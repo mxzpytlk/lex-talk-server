@@ -2,6 +2,7 @@ import { GraphQLObjectType, GraphQLSchema } from 'graphql';
 import { getUser } from './queries/user.query';
 import { addUser } from './mutations/add-user.mutation';
 import { logout } from './mutations/logout.mutation';
+import { refresh } from './mutations/refresh.mutation';
 
 const query = new GraphQLObjectType({
   name: 'Query',
@@ -13,7 +14,7 @@ const query = new GraphQLObjectType({
 const mutation = new GraphQLObjectType({
   name: 'Mutation',
   fields: {
-    addUser, logout
+    addUser, logout, refresh
   },
 });
 

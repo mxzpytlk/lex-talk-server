@@ -3,7 +3,7 @@ export class ApiError extends Error {
     super(message);
   }
 
-  public static UnaothorisedError(): ApiError {
+  public static UnauthorisedError(): ApiError {
     return new ApiError(401, 'User is unauthorised');
   }
 
