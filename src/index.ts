@@ -7,7 +7,7 @@ import cors from 'cors';
 import { queryGraphQl as schema } from './shema/schema';
 import cookieParser from 'cookie-parser';
 import router from './route/index';
-import { handleError } from './midlewares/error.middleware';
+import { handleError, handleGraphQLErrorFn } from './midlewares/error.middleware';
 
 env.config();
 
@@ -15,7 +15,10 @@ const PORT = process.env.PORT || 5000;
 
 const app: express.Application = express();
 
-app.use(cors());
+app.use(cors({
+  credentials: true,
+  origin: config.clientUrl
+}));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -24,11 +27,13 @@ app.use('/graphql', (req, res) => {
     schema,
     context: { req, res },
     graphiql: true,
+    customFormatErrorFn: handleGraphQLErrorFn(res),
   })(req, res)
 });
 
 app.use('/api', router);
 app.use(handleError);
+import { checkAuth } from './midlewares/auth.middleware';
 
 async function start(): Promise<void> {
   try {

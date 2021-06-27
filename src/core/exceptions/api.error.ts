@@ -1,6 +1,9 @@
-export class ApiError extends Error {
-  constructor(public readonly status: number, public readonly message: string, public readonly errors: Error[] = []) {
-    super(message);
+import { GQLError } from './graphql-error';
+
+export class ApiError extends GQLError {
+
+  constructor(statusCode: number, message: string, errors: Error[] = []) {
+    super(message, statusCode, errors);
   }
 
   public static UnauthorisedError(): ApiError {

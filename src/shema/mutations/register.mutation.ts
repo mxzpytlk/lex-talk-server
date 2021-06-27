@@ -6,7 +6,7 @@ import { UserService } from '../../services/user.service';
 import { RegisterType } from '../types/register.type';
 import { CookieKey } from '../../core/enums/cookie-key';
 
-export const addUser: GraphQLFieldConfig<null, IConnection> = {
+export const register: GraphQLFieldConfig<null, IConnection> = {
   type: RegisterType,
   args: {
     email: { type: GraphQLString },

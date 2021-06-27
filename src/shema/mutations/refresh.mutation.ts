@@ -7,8 +7,7 @@ import { CookieKey } from '../../core/enums/cookie-key';
 
 export const refresh: GraphQLFieldConfig<null, IConnection> = {
   type: RegisterType,
-  args: {
-  },
+  args: {},
   async resolve(_parent, _, { req, res }) {
     const refreshToken: string = req.cookies[CookieKey.REFRESH_TOKEN];
     const data = await UserService.refresh(refreshToken);
