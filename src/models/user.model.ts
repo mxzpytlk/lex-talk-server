@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Types } from 'mongoose';
 
 const schema = new Schema({
   password: {
@@ -14,6 +14,9 @@ const schema = new Schema({
   activationLink: {
     type: String,
   },
+  name: { type: String },
+  about: { type: String },
+  avatar: { type: Types.ObjectId, ref: 'File' },
 });
 
 export const UserModel = model('User', schema);

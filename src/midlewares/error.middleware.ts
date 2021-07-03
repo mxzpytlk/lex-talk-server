@@ -3,8 +3,6 @@ import { ApiError } from '../core/exceptions/api.error';
 import { GQLError } from '../core/exceptions/graphql-error';
 
 export function handleError(err: Error, req: Request, res: Response): void {
-  console.error(err.message);
-  console.error(err.stack);
   if (err instanceof ApiError) {
     res.status(err.statusCode).json(err);
     return;

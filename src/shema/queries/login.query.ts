@@ -8,7 +8,7 @@ import { RegisterType } from '../types/register.type';
 export const login: GraphQLFieldConfig<null, IConnection> = {
   type: RegisterType,
   args: { email: { type: GraphQLString }, password: { type: GraphQLString } },
-  async resolve(_parent, { email, password }, { res, req }) {
+  async resolve(_parent, { email, password }, { res }) {
     const data = await UserService.login(email, password);
     res.cookie(CookieKey.REFRESH_TOKEN, data.jwt.refreshToken, {
       maxAge: daysToMilisecond(30),

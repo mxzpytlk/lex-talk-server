@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 import config from '../assets/config.json';
 import { IJwt } from '../core/data/jwt';
-import { IUser } from '../core/data/user';
 import { MDocument } from '../core/types';
 import TokenModel, { IToken } from '../models/token.model';
 

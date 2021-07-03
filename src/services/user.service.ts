@@ -8,6 +8,14 @@ import { IAuthSuccess } from '../core/data/register';
 import config from '../assets/config.json';
 import { MDocument } from '../core/types';
 import { ApiError } from '../core/exceptions/api.error';
+import { FileUpload } from 'graphql-upload';
+import { FileService } from './file.service';
+
+interface IUserDetails {
+  name?: string;
+  about?: string;
+  avatar?: Promise<FileUpload> | FileUpload;
+}
 
 export class UserService {
   public static async register(email: string, password: string): Promise<IAuthSuccess> {
@@ -37,7 +45,6 @@ export class UserService {
     }
     user.isActivated = true;
     await user.save();
-
   }
   public static async login(email: string, password: string): Promise<IAuthSuccess> {
     const user: MDocument<IUser> = await UserModel.findOne({ email });
@@ -73,5 +80,19 @@ export class UserService {
     const jwt = TokenService.generateToken(user.toJSON());
     await TokenService.saveToken(user.id, jwt.refreshToken);
     return { user: user, jwt };
+  }
+
+  public static async updateInfo(userId: string, details: IUserDetails): Promise<IUser> {
+    const userData: MDocument<IUser> = await UserModel.findById(userId);
+    userData.name = details.name || userData.name;
+    userData.about = details.about || userData.about;
+    const file = await details.avatar;
+    if (file) {
+      const avatarId = await FileService.saveFile(file);
+      userData.avatar = avatarId;
+    }
+    await userData.save();
+    const user = new User(userData);
+    return user;
   }
 }

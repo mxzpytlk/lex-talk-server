@@ -8,6 +8,7 @@ import { queryGraphQl as schema } from './shema/schema';
 import cookieParser from 'cookie-parser';
 import router from './route/index';
 import { handleError, handleGraphQLErrorFn } from './midlewares/error.middleware';
+import { graphqlUploadExpress } from 'graphql-upload';
 
 env.config();
 
@@ -15,25 +16,28 @@ const PORT = process.env.PORT || 5000;
 
 const app: express.Application = express();
 
-app.use(cors({
-  credentials: true,
-  origin: config.clientUrl
-}));
+app.use(
+  cors({
+    credentials: true,
+    origin: config.clientUrl,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb',  extended: true, parameterLimit:50000 }));
 
-app.use('/graphql', (req, res) => {
+app.use('/graphql', graphqlUploadExpress({ maxFiles: 1 }), (req, res) => {
   return graphqlHTTP({
     schema,
     context: { req, res },
     graphiql: true,
     customFormatErrorFn: handleGraphQLErrorFn(res),
-  })(req, res)
+  })(req, res);
 });
 
 app.use('/api', router);
 app.use(handleError);
-import { checkAuth } from './midlewares/auth.middleware';
 
 async function start(): Promise<void> {
   try {
