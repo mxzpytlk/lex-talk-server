@@ -26,6 +26,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: '50mb',  extended: true, parameterLimit:50000 }));
+app.use('/api', router);
 
 app.use('/graphql', graphqlUploadExpress({ maxFiles: 1 }), (req, res) => {
   return graphqlHTTP({
@@ -36,7 +37,6 @@ app.use('/graphql', graphqlUploadExpress({ maxFiles: 1 }), (req, res) => {
   })(req, res);
 });
 
-app.use('/api', router);
 app.use(handleError);
 
 async function start(): Promise<void> {
