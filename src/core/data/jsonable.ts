@@ -7,7 +7,7 @@ export class JSONable {
       if (typeof value === 'function') {
         continue;
       }
-      result[key] = value.toJSON?.() || value;
+      result[key] = value?.toJSON?.() || value;
     }
     return result;
   }

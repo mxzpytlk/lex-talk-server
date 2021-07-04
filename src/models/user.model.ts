@@ -14,7 +14,7 @@ const schema = new Schema({
   activationLink: {
     type: String,
   },
-  name: { type: String },
+  name: { type: String, unique: true, },
   about: { type: String },
   avatar: { type: Types.ObjectId, ref: 'File' },
 });
