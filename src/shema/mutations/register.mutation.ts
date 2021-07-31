@@ -13,7 +13,7 @@ export const register: GraphQLFieldConfig<null, IConnection> = {
     password: { type: GraphQLString },
   },
   async resolve(_parent, { email, password }, { res }) {
-    if (!password || password.length < 6) {
+    if (password?.length < 6) {
       throw ApiError.BadRequest('Password can not be less than 6');
     }
     const data = await UserService.register(email, password);

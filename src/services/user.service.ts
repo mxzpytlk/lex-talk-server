@@ -46,6 +46,7 @@ export class UserService {
     user.isActivated = true;
     await user.save();
   }
+
   public static async login(email: string, password: string): Promise<IAuthSuccess> {
     const user: MDocument<IUser> = await UserModel.findOne({ email });
 

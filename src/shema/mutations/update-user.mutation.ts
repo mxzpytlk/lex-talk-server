@@ -13,7 +13,7 @@ export const updateUser: GraphQLFieldConfig<null, IConnection> = {
     about: { type: GraphQLString },
     avatar: { type: GraphQLUpload },
   },
-  async resolve(_parent, data, { req, res }) {
+  async resolve(_parent, data, { req }) {
     const user = checkAuth(req);
 
     if (!(user.name && user.about)) {
