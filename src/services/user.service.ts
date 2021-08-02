@@ -8,13 +8,11 @@ import { IAuthSuccess } from '../core/data/register';
 import config from '../assets/config.json';
 import { MDocument } from '../core/types';
 import { ApiError } from '../core/exceptions/api.error';
-import { FileUpload } from 'graphql-upload';
 import { FileService } from './file.service';
 
 interface IUserDetails {
   name?: string;
   about?: string;
-  avatar?: Promise<FileUpload> | FileUpload;
 }
 
 export class UserService {
@@ -87,13 +85,16 @@ export class UserService {
     const userData: MDocument<IUser> = await UserModel.findById(userId);
     userData.name = details.name || userData.name;
     userData.about = details.about || userData.about;
-    const file = await details.avatar;
-    if (file) {
-      const avatarId = await FileService.saveFile(file);
-      userData.avatar = avatarId;
-    }
     await userData.save();
     const user = new User(userData);
     return user;
+  }
+
+  public static async saveAvatar(data: Buffer, contentType: string, userId: string): Promise<string> {
+    const imgId = await FileService.saveFile(data, contentType);
+    const userData: MDocument<IUser> = await UserModel.findById(userId);
+    userData.avatar = imgId;
+    await userData.save();
+    return imgId;
   }
 }
