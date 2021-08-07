@@ -18,6 +18,7 @@ const schema = new Schema({
   about: { type: String },
   avatar: { type: Types.ObjectId, ref: 'File' },
   lexTalkConfig: { type: Types.ObjectId, ref: 'LexTalkConfig' },
+  contacts: { type: [Types.ObjectId], ref: 'Contact', required: true },
 });
 
 export const UserModel = model('User', schema);

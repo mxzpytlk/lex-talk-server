@@ -6,6 +6,7 @@ import { refresh } from './queries/refresh.query';
 import { updateUser } from './mutations/update-user.mutation';
 import { updateConfig } from './mutations/update-config.mutation';
 import { getConfig } from './queries/config.query';
+import { addContact } from './mutations/add-contact.mutation';
 
 const query = new GraphQLObjectType({
   name: 'Query',
@@ -17,7 +18,7 @@ const query = new GraphQLObjectType({
 const mutation = new GraphQLObjectType({
   name: 'Mutation',
   fields: {
-    register, logout, updateUser, updateConfig
+    register, logout, updateUser, updateConfig, addContact
   },
 });
 
