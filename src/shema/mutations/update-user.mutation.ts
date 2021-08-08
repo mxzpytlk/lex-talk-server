@@ -1,26 +1,23 @@
-import { GraphQLFieldConfig, GraphQLString } from 'graphql';
-import { IConnection } from '../../core/data/connection';
-import { GraphQLUpload } from 'graphql-upload';
 import { checkAuth } from '../../midlewares/check-auth';
-import { ApiError } from '../../core/exceptions/api.error';
+import { ErrorService } from '../../core/exceptions/api.error';
 import { UserService } from '../../services/user.service';
-import { UserType } from '../types/user.type';
+import { ResolveFunction } from '../../core/types';
+import { IUser } from '../../core/data/user';
 
-export const updateUser: GraphQLFieldConfig<null, IConnection> = {
-  type: UserType,
-  args: {
-    name: { type: GraphQLString },
-    about: { type: GraphQLString },
-  },
-  async resolve(_parent, data, { req }) {
-    const user = checkAuth(req);
+type UpdateUserData = {
+  name: string;
+  about: string;
+};
+type UpdateUserResolve = ResolveFunction<UpdateUserData, IUser>;
 
-    if (!(user.name && user.about)) {
-      if (!(data.name && data.about)) {
-        throw ApiError.BadRequest('Not all fields fullfiled');
-      }
+export const updateUser: UpdateUserResolve = async (_parent, data, { req }) => {
+  const user = checkAuth(req);
+
+  if (!(user.name && user.about)) {
+    if (!(data.name && data.about)) {
+      throw ErrorService.BadRequest('Not all fields fullfiled');
     }
+  }
 
-    return await UserService.updateInfo(user.id, data);
-  },
+  return await UserService.updateInfo(user.id, data);
 };

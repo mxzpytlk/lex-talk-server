@@ -2,42 +2,24 @@ import express from 'express';
 import config from './assets/config.json';
 import env from 'dotenv';
 import mongoose from 'mongoose';
-import { graphqlHTTP } from 'express-graphql';
 import cors from 'cors';
-import { queryGraphQl as schema } from './shema/schema';
 import cookieParser from 'cookie-parser';
 import router from './route/index';
-import { handleError, handleGraphQLErrorFn } from './midlewares/error.middleware';
-import { graphqlUploadExpress } from 'graphql-upload';
+import { handleGraphQLErrorFn } from './midlewares/error.middleware';
+import { ApolloServer } from 'apollo-server-express';
+import { typeDefs } from './shema/types';
+import { resolvers } from './shema/resolvers';
 
 env.config();
 
 const PORT = process.env.PORT || 5000;
 
-const app: express.Application = express();
-
-app.use(
-  cors({
-    credentials: true,
-    origin: config.clientUrl,
-  })
-);
-app.use(express.json());
-app.use(cookieParser());
-app.use(express.json({limit: '50mb'}));
-app.use(express.urlencoded({limit: '50mb',  extended: true, parameterLimit:50000 }));
-app.use('/api', router);
-
-app.use('/graphql', graphqlUploadExpress({ maxFiles: 1 }), (req, res) => {
-  return graphqlHTTP({
-    schema,
-    context: { req, res },
-    graphiql: true,
-    customFormatErrorFn: handleGraphQLErrorFn(res),
-  })(req, res);
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  formatError: handleGraphQLErrorFn,
+  context: (context) => context
 });
-
-app.use(handleError);
 
 async function start(): Promise<void> {
   try {
@@ -46,7 +28,31 @@ async function start(): Promise<void> {
       useUnifiedTopology: true,
       useCreateIndex: true,
     });
-    app.listen(PORT, () => console.log(`App started on port ${PORT}`));
+    await server.start();
+    const app: express.Application = express();
+    app.use(
+      cors({
+        credentials: true,
+        origin: config.clientUrl,
+      })
+    );
+    app.use(express.json());
+    app.use(cookieParser());
+    app.use(express.json({ limit: '50mb' }));
+    app.use(express.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
+    app.use('/api', router);
+
+    server.applyMiddleware({
+      app,
+      path: '/graphql',
+      cors: {
+        credentials: true,
+        origin: config.clientUrl,
+      },
+    });
+    app.listen(PORT, () => {
+      console.log(`App started on port ${PORT}`);
+    });
   } catch (e) {
     console.error(e.message);
     process.exit(1);

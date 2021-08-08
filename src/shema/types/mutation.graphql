@@ -1,0 +1,12 @@
+# import LexTalkConfig from "lex-talk-config.graphql"
+# import Register from "register.graphql"
+# import Contact from "contact.graphql"
+# import User from "user.graphql"
+
+type Mutation {
+  addContact(name: String!): Contact
+  logout: Boolean,
+  register(email: String!, password: String!): Register
+  updateConfig(lang: String, darkMode: Boolean): LexTalkConfig
+  updateUser(name: String, about: String): User
+}

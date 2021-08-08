@@ -1,0 +1,11 @@
+# import User from "user.graphql"
+
+type Jwt {
+    accesToken: String
+    refreshToken: String
+}
+
+type Register {
+  user: User
+  jwt: Jwt
+}

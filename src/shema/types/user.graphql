@@ -1,0 +1,8 @@
+type User {
+  id: ID
+  email: String
+  isActivated: Boolean
+  name: String
+  about: String
+  avatar: String
+}

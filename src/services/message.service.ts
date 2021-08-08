@@ -3,17 +3,17 @@ import { ContactModel } from '../models/contacts.model';
 import { MDocument } from '../core/types';
 import { IUser } from '../core/data/user';
 import { IContact } from '../core/data/contact';
-import { ApiError } from '../core/exceptions/api.error';
+import { ErrorService } from '../core/exceptions/api.error';
 
 export class MessageService {
   public static async addContact(userId: string, name: string): Promise<IContact> {
     const user: MDocument<IUser> = await UserModel.findById(userId);
     const searchingUser: MDocument<IUser> = await UserModel.findOne({ name });
     if (!searchingUser) {
-      throw ApiError.BadRequest('user.not_exist');
+      throw ErrorService.BadRequest('user.not_exist');
     }
     if (searchingUser.equals(user)) {
-      throw ApiError.BadRequest('user.not_add_yourself');
+      throw ErrorService.BadRequest('user.not_add_yourself');
     }
 
     const oldContacts = await ContactModel.find({ user: searchingUser._id });

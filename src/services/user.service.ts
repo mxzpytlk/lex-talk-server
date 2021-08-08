@@ -7,7 +7,7 @@ import { IUser, User } from '../core/data/user';
 import { IAuthSuccess } from '../core/data/register';
 import config from '../assets/config.json';
 import { MDocument } from '../core/types';
-import { ApiError } from '../core/exceptions/api.error';
+import { ErrorService } from '../core/exceptions/api.error';
 import { FileService } from './file.service';
 
 interface IUserDetails {
@@ -19,7 +19,7 @@ export class UserService {
   public static async register(email: string, password: string): Promise<IAuthSuccess> {
     const candidate = await UserModel.findOne({ email });
     if (candidate) {
-      throw ApiError.BadRequest('This email is already used');
+      throw ErrorService.BadRequest('This email is already used');
     }
     const hashPass = await bcrypt.hash(password, 3);
     const activationLink = v4();
@@ -39,7 +39,7 @@ export class UserService {
     const user: MDocument<IUser> = await UserModel.findOne({ activationLink });
 
     if (!user) {
-      throw ApiError.BadRequest('Incorrect activation link');
+      throw ErrorService.BadRequest('Incorrect activation link');
     }
     user.isActivated = true;
     await user.save();
@@ -49,11 +49,11 @@ export class UserService {
     const user: MDocument<IUser> = await UserModel.findOne({ email });
 
     if (!user) {
-      throw ApiError.BadRequest('No user with such email');
+      throw ErrorService.BadRequest('No user with such email');
     }
     const isPathEquals = await bcrypt.compare(password, user.password);
     if (!isPathEquals) {
-      throw ApiError.BadRequest('Incorrect password');
+      throw ErrorService.BadRequest('Incorrect password');
     }
     const userData = new User(user);
     const jwt = TokenService.generateToken(userData.toJSON());
@@ -67,12 +67,12 @@ export class UserService {
 
   public static async refresh(refreshToken: string): Promise<IAuthSuccess> {
     if (!refreshToken) {
-      throw ApiError.UnauthorisedError();
+      throw ErrorService.UnauthorisedError();
     }
     const userFromToken = TokenService.validateRefreshToken<IUser>(refreshToken);
     const tokenFromDb = await TokenService.findToken(refreshToken);
     if (!userFromToken || !tokenFromDb) {
-      throw ApiError.UnauthorisedError();
+      throw ErrorService.UnauthorisedError();
     }
     const userData = await UserModel.findById(userFromToken.id);
     const user = new User(userData);

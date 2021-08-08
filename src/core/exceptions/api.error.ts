@@ -1,16 +1,12 @@
-import { GQLError } from './graphql-error';
+import { AuthenticationError, UserInputError } from 'apollo-server-express';
 
-export class ApiError extends GQLError {
+export class ErrorService {
 
-  constructor(statusCode: number, message: string, errors: Error[] = []) {
-    super(message, statusCode, errors);
+  public static UnauthorisedError(): AuthenticationError {
+    return new AuthenticationError('User is unauthorised');
   }
 
-  public static UnauthorisedError(): ApiError {
-    return new ApiError(401, 'User is unauthorised');
-  }
-
-  public static BadRequest(message: string, errors: Error[] = []): ApiError {
-    return new ApiError(400, message, errors);
+  public static BadRequest(message: string): UserInputError {
+    return new UserInputError(message);
   }
 }

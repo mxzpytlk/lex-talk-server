@@ -1,0 +1,4 @@
+type LexTalkConfig {
+  lang: String
+  darkMode: Boolean
+}
