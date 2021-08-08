@@ -9,9 +9,15 @@ import { updateUser } from './mutations/update-user.mutation';
 
 export const resolvers = {
   Query: {
-    getConfig, login, refresh
+    getConfig,
+    login,
+    refresh,
   },
   Mutation: {
-    addContact, logout, register, updateConfig, updateUser
-  }
+    addContact,
+    logout,
+    register,
+    updateConfig,
+    updateUser,
+  },
 };

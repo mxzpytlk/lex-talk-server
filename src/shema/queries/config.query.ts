@@ -1,4 +1,3 @@
-import { IConnection } from '../../core/data/connection';
 import { ILexTalkConfig } from '../../core/data/lex-talk-config.interface';
 import { ResolveFunction } from '../../core/types';
 import { checkAuth } from '../../midlewares/check-auth';

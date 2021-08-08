@@ -35,7 +35,7 @@ export class TokenService {
     try {
       const userData = jwt.verify(token, config.jwtSecretAcces);
       return userData as T;
-    } catch(_) {
+    } catch (_) {
       return null;
     }
   }
@@ -43,8 +43,8 @@ export class TokenService {
   public static validateRefreshToken<T>(token: string): T {
     try {
       const userData = jwt.verify(token, config.jwtSecretRefresh);
-      return (userData as T);
-    } catch(_) {
+      return userData as T;
+    } catch (_) {
       return null;
     }
   }

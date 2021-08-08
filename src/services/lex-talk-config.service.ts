@@ -18,7 +18,7 @@ export class LexTalkConfigService {
 
     const config: MDocument<ILexTalkConfig> = await ConfigModel.findById(configId);
     if (newConfig.lang) {
-      config.lang= newConfig.lang;
+      config.lang = newConfig.lang;
     }
     if ('darkMode' in newConfig) {
       config.darkMode = newConfig.darkMode;

@@ -8,7 +8,7 @@ const schema = new Schema({
   contentType: {
     type: String,
     required: true,
-  }
+  },
 });
 
 export const FileModel = model('File', schema);

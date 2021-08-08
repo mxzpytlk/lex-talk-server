@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { FileService } from '../services/file.service';
 
 export class ImgController {
-  public static async getImg(req: Request<{id: string}>, res: Response, next: (object: unknown) => void): Promise<void> {
+  public static async getImg(req: Request<{ id: string }>, res: Response, next: (object: unknown) => void): Promise<void> {
     try {
       const fileId = req.params.id;
       const file = await FileService.getFile(fileId);
@@ -13,9 +13,10 @@ export class ImgController {
     }
   }
 
-  public static async saveImg(req: Request<{id: string}>, res: Response, next: (object: unknown) => void): Promise<void> {
+  public static async saveImg(req: Request<{ id: string }>, res: Response, next: (object: unknown) => void): Promise<void> {
     try {
-      // TODO 
+      // eslint-disable-next-line prettier/prettier
+      // TODO
       // req.on('readable', function() {
       //   const img = req.read();
       //   if (img) {

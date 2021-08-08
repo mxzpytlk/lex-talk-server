@@ -1,5 +1,3 @@
-import { GraphQLFieldConfig, GraphQLString } from 'graphql';
-import { IConnection } from '../../core/data/connection';
 import { IAuthSuccess, IRegister } from '../../core/data/register';
 import { CookieKey } from '../../core/enums/cookie-key';
 import { ResolveFunction } from '../../core/types';

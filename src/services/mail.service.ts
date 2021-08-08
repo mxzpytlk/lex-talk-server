@@ -12,8 +12,8 @@ export class MailService {
       secure: true,
       auth: {
         user: config.mailUser,
-        pass: config.mailPass
-      }
+        pass: config.mailPass,
+      },
     });
   }
 
@@ -28,7 +28,7 @@ export class MailService {
           <div>
             <h1>Use this <a href="${link}">link</a> for your acount activation</h1>
           </div>
-        `
+        `,
       });
     } catch (e) {
       console.error(e);

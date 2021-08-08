@@ -18,7 +18,7 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   formatError: handleGraphQLErrorFn,
-  context: (context) => context
+  context: (context) => context,
 });
 
 async function start(): Promise<void> {

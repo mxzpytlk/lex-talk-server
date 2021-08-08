@@ -6,7 +6,7 @@ const schema = new Schema({
 });
 
 export interface IToken {
-  refreshToken: string,
+  refreshToken: string;
   user: string;
 }
 
