@@ -2,7 +2,7 @@ import { UserModel } from '../models/user.model';
 import { ContactModel } from '../models/contacts.model';
 import { MDocument } from '../core/types';
 import { IUser } from '../core/data/user';
-import { IContact } from '../core/data/contact';
+import { ContactData, IContact, IContactDB } from '../core/data/contact';
 import { ErrorService } from '../core/exceptions/api.error';
 
 export class MessageService {
@@ -38,5 +38,13 @@ export class MessageService {
       about: searchingUser.about,
       avatar: searchingUser.avatar,
     };
+  }
+
+  public static async getContacts(userId: string): Promise<IContact[]> {
+    const user: MDocument<IUser> = await UserModel.findById(userId);
+    const contactsInDb: MDocument<IContactDB>[] = await ContactModel.find({ _id: { $in: user.contacts } });
+    const contacts = contactsInDb.map(ContactData.create);
+
+    return Promise.all(contacts);
   }
 }

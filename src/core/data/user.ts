@@ -20,15 +20,11 @@ export class User extends JSONable implements IUser {
   }
 }
 
-interface IUserContact {
-  user: MDocument<IUser>;
-}
-
 export interface IUser {
   email: string;
   id: string;
   isActivated: boolean;
-  contacts?: MDocument<IUserContact>[];
+  contacts?: MDocument<string>[];
   password?: string;
   name?: string;
   about?: string;

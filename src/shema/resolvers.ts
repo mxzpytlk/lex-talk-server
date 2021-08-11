@@ -6,12 +6,14 @@ import { logout } from './mutations/logout.mutation';
 import { register } from './mutations/register.mutation';
 import { updateConfig } from './mutations/update-config.mutation';
 import { updateUser } from './mutations/update-user.mutation';
+import { contacts } from './queries/contacts.query';
 
 export const resolvers = {
   Query: {
     getConfig,
     login,
     refresh,
+    contacts,
   },
   Mutation: {
     addContact,

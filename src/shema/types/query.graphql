@@ -1,8 +1,10 @@
 # import LexTalkConfig from "lex-talk-config.graphql"
 # import Register from "register.graphql"
+# import Contact from "contact.graphql"
 
 type Query {
   getConfig: LexTalkConfig
   login(email: String!, password: String!): Register
   refresh: Register
+  contacts: [Contact]
 }
