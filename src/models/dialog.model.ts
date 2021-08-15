@@ -1,9 +1,9 @@
 import { Schema, model, Types } from 'mongoose';
 
 const schema = new Schema({
-  unreadMessages: {
+  readMessageCount: {
     type: Number,
-    default: 1,
+    default: 0,
   },
   messages: { type: [Types.ObjectId], ref: 'Message', required: true },
 });

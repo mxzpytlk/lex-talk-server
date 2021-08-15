@@ -39,7 +39,9 @@ export class ContactData implements IContact {
     return this.contact.avatar;
   }
 
-  lastMessage?: string;
+  public get lastMessage(): string {
+    return this.contact.lastMessage;
+  }
 
   public static async create(contactInDb: MDocument<IContactDB> | IContactDB): Promise<ContactData> {
     const user: MDocument<IUser> = await UserModel.findById(contactInDb.user);
@@ -50,9 +52,10 @@ export class ContactData implements IContact {
       const lastMessageId = dialog.messages.pop();
       if (lastMessageId) {
         const lastMessageInDb: MDocument<IMessageInDb> = await MessageModel.findById(lastMessageId);
-        lastMessage = lastMessageInDb.text || lastMessageInDb.file;
+        lastMessage = (lastMessageInDb.text || lastMessageInDb.file._id).toString();
       }
     }
+
     const { name, about, avatar } = user;
     const contact: IContact = { id: contactInDb._id, name, about, avatar, lastMessage };
     return new ContactData(contact);
