@@ -1,4 +1,4 @@
-export interface DialogInDB {
+export interface IDialogInDB {
   unreadMessages: number;
   messages: string[];
 }

@@ -6,7 +6,7 @@ import { ContactData, IContact, IContactDB } from '../core/data/contact';
 import { ErrorService } from '../core/exceptions/api.error';
 import { INewMessage } from '../core/data/message';
 import { DialogModel } from '../models/dialog.model';
-import { DialogInDB as IDialogInDB } from '../core/data/dialog';
+import { IDialogInDB } from '../core/data/dialog';
 import { MessageModel } from '../models/message.model';
 
 export class MessageService {
@@ -49,7 +49,7 @@ export class MessageService {
     return MessageService.getUserContacts(user);
   }
 
-  public static async sendMessage(userId: string, { text, contactId }: INewMessage): Promise<void> {
+  public static async sendMessage(userId: string, { text, contactId, file }: INewMessage): Promise<void> {
     const user: MDocument<IUser> = await UserModel.findById(userId);
     const userContact: MDocument<IContactDB> = await ContactModel.findById(contactId);
     const companion: MDocument<IUser> = await UserModel.findById(userContact.user);
@@ -70,7 +70,7 @@ export class MessageService {
     }
     const dialog: MDocument<IDialogInDB> = await DialogModel.findById(userContact.dialog);
     const dateTime = new Date().toISOString();
-    const message = new MessageModel({ text, dateTime, sender: userId });
+    const message = new MessageModel({ text, file, dateTime, sender: userId });
     dialog.messages.push(message.id);
     await dialog.save();
     await message.save();

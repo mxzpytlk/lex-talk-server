@@ -1,6 +1,10 @@
 import { MDocument } from '../types';
 import { IUser } from './user';
 import { UserModel } from '../../models/user.model';
+import { DialogModel } from '../../models/dialog.model';
+import { IDialogInDB } from './dialog';
+import { MessageModel } from '../../models/message.model';
+import { IMessageInDb } from './message';
 
 export interface IContact {
   id: string;
@@ -39,8 +43,18 @@ export class ContactData implements IContact {
 
   public static async create(contactInDb: MDocument<IContactDB> | IContactDB): Promise<ContactData> {
     const user: MDocument<IUser> = await UserModel.findById(contactInDb.user);
+    const dialogId = contactInDb.dialog;
+    let lastMessage: string;
+    if (dialogId) {
+      const dialog: MDocument<IDialogInDB> = await DialogModel.findById(contactInDb.dialog);
+      const lastMessageId = dialog.messages.pop();
+      if (lastMessageId) {
+        const lastMessageInDb: MDocument<IMessageInDb> = await MessageModel.findById(lastMessageId);
+        lastMessage = lastMessageInDb.text || lastMessageInDb.file;
+      }
+    }
     const { name, about, avatar } = user;
-    const contact: IContact = { id: contactInDb._id, name, about, avatar };
+    const contact: IContact = { id: contactInDb._id, name, about, avatar, lastMessage };
     return new ContactData(contact);
   }
 }

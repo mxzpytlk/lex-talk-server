@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import { FileService } from '../services/file.service';
 import { Error } from 'mongoose';
+import { MessageService } from '../services/message.service';
+import { checkAuth } from '../midlewares/check-auth';
+import { INewMessage } from '../core/data/message';
 
 export class ImgController {
   public static async getImg(req: Request<{ id: string }>, res: Response, next: (object: unknown) => void): Promise<void> {
@@ -17,19 +20,26 @@ export class ImgController {
     }
   }
 
-  public static async saveImg(req: Request<{ id: string }>, res: Response, next: (object: unknown) => void): Promise<void> {
+  public static async sendImg(req: Request<{ id: string }>, res: Response, next: (object: unknown) => void): Promise<void> {
     try {
-      // eslint-disable-next-line prettier/prettier
-      // TODO
-      // req.on('readable', function() {
-      //   const img = req.read();
-      //   if (img) {
-      //     fs.writeFile('out.jpg', img, 'base64', (err: Error) => err && res.status(500).send());
-      //   }
-      // });
-      res.send('SUCCESS');
+      const user = checkAuth(req);
+      const contactId = req.params.id;
+      const contentType = req.headers['content-type'];
+
+      req.on('readable', async () => {
+        const img: Buffer = req.read();
+        if (img) {
+          const imgId = await FileService.saveFile(img, contentType);
+          const message: INewMessage = {
+            contactId,
+            file: imgId,
+          };
+          await MessageService.sendMessage(user.id, message);
+          res.send(imgId);
+        }
+      });
     } catch (e) {
-      next(e);
+      res.status(500).send();
     }
   }
 }
