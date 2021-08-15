@@ -5,6 +5,10 @@ const schema = new Schema({
     type: Types.ObjectId,
     ref: 'User',
   },
+  dialog: {
+    type: Types.ObjectId,
+    ref: 'Dialog',
+  },
 });
 
-export const ContactModel = model('contact', schema);
+export const ContactModel = model('Contact', schema);

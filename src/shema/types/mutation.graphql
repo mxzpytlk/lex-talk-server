@@ -9,4 +9,5 @@ type Mutation {
   register(email: String!, password: String!): Register
   updateConfig(lang: String, darkMode: Boolean): LexTalkConfig
   updateUser(name: String, about: String): User
+  sendMessage(text: String!, contactId: ID!): Boolean
 }

@@ -7,6 +7,7 @@ import { register } from './mutations/register.mutation';
 import { updateConfig } from './mutations/update-config.mutation';
 import { updateUser } from './mutations/update-user.mutation';
 import { contacts } from './queries/contacts.query';
+import { sendMessage } from './mutations/send-message.mutation';
 
 export const resolvers = {
   Query: {
@@ -21,5 +22,6 @@ export const resolvers = {
     register,
     updateConfig,
     updateUser,
+    sendMessage,
   },
 };

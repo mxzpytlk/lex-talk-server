@@ -4,6 +4,10 @@ import { MDocument } from '../core/types';
 import { IUser } from '../core/data/user';
 import { ContactData, IContact, IContactDB } from '../core/data/contact';
 import { ErrorService } from '../core/exceptions/api.error';
+import { INewMessage } from '../core/data/message';
+import { DialogModel } from '../models/dialog.model';
+import { DialogInDB as IDialogInDB } from '../core/data/dialog';
+import { MessageModel } from '../models/message.model';
 
 export class MessageService {
   public static async addContact(userId: string, name: string): Promise<IContact> {
@@ -42,9 +46,48 @@ export class MessageService {
 
   public static async getContacts(userId: string): Promise<IContact[]> {
     const user: MDocument<IUser> = await UserModel.findById(userId);
-    const contactsInDb: MDocument<IContactDB>[] = await ContactModel.find({ _id: { $in: user.contacts } });
-    const contacts = contactsInDb.map(ContactData.create);
+    return MessageService.getUserContacts(user);
+  }
 
+  public static async sendMessage(userId: string, { text, contactId }: INewMessage): Promise<void> {
+    const user: MDocument<IUser> = await UserModel.findById(userId);
+    const userContact: MDocument<IContactDB> = await ContactModel.findById(contactId);
+    const companion: MDocument<IUser> = await UserModel.findById(userContact.user);
+    let companionContact = await MessageService.getUserContact(companion, user);
+    if (!companionContact) {
+      companionContact = new ContactModel({ user: user._id });
+      companion.contacts.push(companionContact._id);
+      await companionContact.save();
+      await companion.save();
+    }
+    if (!userContact.dialog || !companionContact.dialog) {
+      const dialog = new DialogModel();
+      userContact.dialog = dialog._id;
+      companionContact.dialog = dialog._id;
+      await dialog.save();
+      await userContact.save();
+      await companionContact.save();
+    }
+    const dialog: MDocument<IDialogInDB> = await DialogModel.findById(userContact.dialog);
+    const dateTime = new Date().toISOString();
+    const message = new MessageModel({ text, dateTime, sender: userId });
+    dialog.messages.push(message.id);
+    await dialog.save();
+    await message.save();
+  }
+
+  private static async getUserContacts(user: MDocument<IUser>): Promise<IContact[]> {
+    const contactsInDb = await MessageService.getUserContactsFromDB(user);
+    const contacts = contactsInDb.map(ContactData.create);
     return Promise.all(contacts);
+  }
+
+  private static async getUserContact(user: MDocument<IUser>, companion: MDocument<IUser>): Promise<MDocument<IContactDB>> {
+    const allUserContacts = await MessageService.getUserContactsFromDB(user);
+    return allUserContacts.find((contact) => companion._id.equals(contact.user));
+  }
+
+  private static async getUserContactsFromDB(user: MDocument<IUser>): Promise<MDocument<IContactDB>[]> {
+    return ContactModel.find({ _id: { $in: user.contacts } });
   }
 }

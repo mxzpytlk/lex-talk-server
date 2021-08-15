@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { FileService } from '../services/file.service';
+import { Error } from 'mongoose';
 
 export class ImgController {
   public static async getImg(req: Request<{ id: string }>, res: Response, next: (object: unknown) => void): Promise<void> {
@@ -9,6 +10,9 @@ export class ImgController {
       res.setHeader('content-type', 'image/jpeg');
       res.send(file);
     } catch (e) {
+      if (e instanceof Error.CastError) {
+        res.status(400).send('No such file');
+      }
       next(e);
     }
   }
