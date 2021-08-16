@@ -17,7 +17,7 @@ export interface IContact {
 export interface IContactDB {
   _id: string;
   user: string;
-  dialog?: string;
+  dialog?: MDocument<string>;
 }
 
 export class ContactData implements IContact {

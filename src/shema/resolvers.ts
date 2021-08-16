@@ -8,6 +8,7 @@ import { updateConfig } from './mutations/update-config.mutation';
 import { updateUser } from './mutations/update-user.mutation';
 import { contacts } from './queries/contacts.query';
 import { sendMessage } from './mutations/send-message.mutation';
+import { messages } from './queries/messages.query';
 
 export const resolvers = {
   Query: {
@@ -15,6 +16,7 @@ export const resolvers = {
     login,
     refresh,
     contacts,
+    messages,
   },
   Mutation: {
     addContact,

@@ -4,7 +4,7 @@ import { MDocument } from '../core/types';
 import { IUser } from '../core/data/user';
 import { ContactData, IContact, IContactDB } from '../core/data/contact';
 import { ErrorService } from '../core/exceptions/api.error';
-import { INewMessage } from '../core/data/message';
+import { IMessage, IMessageInDb, INewMessage, MessageData } from '../core/data/message';
 import { DialogModel } from '../models/dialog.model';
 import { IDialogInDB } from '../core/data/dialog';
 import { MessageModel } from '../models/message.model';
@@ -74,6 +74,19 @@ export class MessageService {
     dialog.messages.push(message.id);
     await dialog.save();
     await message.save();
+  }
+
+  public static async getMessages(userId: string, contactId: string): Promise<IMessage[]> {
+    const user: MDocument<IUser> = await UserModel.findById(userId);
+    if (!user.contacts.some((contact) => contact._id.equals(contactId))) {
+      throw ErrorService.UnauthorisedError();
+    }
+    const contact: MDocument<IContactDB> = await ContactModel.findById(contactId);
+    const dialog: MDocument<IDialogInDB> = await DialogModel.findById(contact.dialog);
+    const messagesInDB: MDocument<IMessageInDb>[] = await MessageModel.find({ _id: { $in: dialog.messages } });
+
+    const messages = messagesInDB.map((message) => new MessageData(message as IMessageInDb));
+    return messages;
   }
 
   private static async getUserContacts(user: MDocument<IUser>): Promise<IContact[]> {
