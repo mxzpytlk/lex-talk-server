@@ -10,8 +10,7 @@ export class ImgController {
     try {
       const fileId = req.params.id;
       const file = await FileService.getFile(fileId);
-      res.setHeader('content-type', 'image/jpeg');
-      res.send(file);
+      res.setHeader('content-type', 'image/jpeg').send(file);
     } catch (e) {
       if (e instanceof Error.CastError) {
         res.status(400).send('No such file');
@@ -24,20 +23,18 @@ export class ImgController {
     try {
       const user = checkAuth(req);
       const contactId = req.params.id;
-      const contentType = req.headers['content-type'];
-
-      req.on('readable', async () => {
-        const img: Buffer = req.read();
-        if (img) {
-          const imgId = await FileService.saveFile(img, contentType);
-          const message: INewMessage = {
-            contactId,
-            file: imgId,
-          };
-          await MessageService.sendMessage(user.id, message);
-          res.send(imgId);
-        }
-      });
+      const file = req.file;
+      if (file) {
+        const imgId = await FileService.saveFile(file.buffer, file.mimetype);
+        const message: INewMessage = {
+          contactId,
+          file: imgId,
+        };
+        await MessageService.sendMessage(user.id, message);
+        res.send(imgId);
+      } else {
+        res.status(400).send('No file');
+      }
     } catch (e) {
       res.status(500).send();
     }
