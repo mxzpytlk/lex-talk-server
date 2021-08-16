@@ -1,9 +1,6 @@
-# import MessageType from "message-type.graphql"
-
 type Message {
   dateTime: String
   text: String
   file: ID
-  messageType: MessageType
   sender: ID
 }

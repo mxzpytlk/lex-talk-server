@@ -4,14 +4,14 @@ import { UserModel } from '../../models/user.model';
 import { DialogModel } from '../../models/dialog.model';
 import { IDialogInDB } from './dialog';
 import { MessageModel } from '../../models/message.model';
-import { IMessageInDb } from './message';
+import { IMessage, IMessageInDb, MessageData } from './message';
 
 export interface IContact {
   id: string;
   name: string;
   about: string;
   avatar: string;
-  lastMessage?: string;
+  lastMessage?: IMessage;
 }
 
 export interface IContactDB {
@@ -39,20 +39,20 @@ export class ContactData implements IContact {
     return this.contact.avatar;
   }
 
-  public get lastMessage(): string {
+  public get lastMessage(): IMessage {
     return this.contact.lastMessage;
   }
 
   public static async create(contactInDb: MDocument<IContactDB> | IContactDB): Promise<ContactData> {
     const user: MDocument<IUser> = await UserModel.findById(contactInDb.user);
     const dialogId = contactInDb.dialog;
-    let lastMessage: string;
+    let lastMessage: IMessage;
     if (dialogId) {
       const dialog: MDocument<IDialogInDB> = await DialogModel.findById(contactInDb.dialog);
       const lastMessageId = dialog.messages.pop();
       if (lastMessageId) {
         const lastMessageInDb: MDocument<IMessageInDb> = await MessageModel.findById(lastMessageId);
-        lastMessage = (lastMessageInDb.text || lastMessageInDb.file._id).toString();
+        lastMessage = new MessageData(lastMessageInDb as IMessageInDb);
       }
     }
 

@@ -5,7 +5,6 @@ const typesPath = [
   'user.graphql',
   'register.graphql',
   'contact.graphql',
-  'message-type.graphql',
   'message.graphql',
   'query.graphql',
   'mutation.graphql',

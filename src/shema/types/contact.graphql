@@ -1,7 +1,9 @@
+# import Message from "message.graphql"
+
 type Contact {
   id: ID
   name: String
   about: String
   avatar: String
-  lastMessage: String
+  lastMessage: Message
 }
