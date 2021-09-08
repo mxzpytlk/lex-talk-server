@@ -8,6 +8,7 @@ const typesPath = [
   'message.graphql',
   'query.graphql',
   'mutation.graphql',
+  'subscription.graphql',
 ];
 
 function getPath(path: string) {

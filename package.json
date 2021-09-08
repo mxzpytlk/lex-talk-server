@@ -46,6 +46,7 @@
     "webpack-node-externals": "^3.0.0"
   },
   "dependencies": {
+    "@graphql-tools/schema": "^8.2.0",
     "apollo-server-express": "^3.1.2",
     "bcrypt": "^5.0.1",
     "cookie-parser": "^1.4.5",
@@ -59,6 +60,7 @@
     "mongoose": "^5.12.14",
     "multer": "^1.4.3",
     "nodemailer": "^6.6.2",
+    "subscriptions-transport-ws": "^0.9.19",
     "uuid": "^8.3.2"
   }
 }

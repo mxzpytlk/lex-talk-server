@@ -9,17 +9,14 @@ import { handleGraphQLErrorFn } from './midlewares/error.middleware';
 import { ApolloServer } from 'apollo-server-express';
 import { typeDefs } from './shema/types';
 import { resolvers } from './shema/resolvers';
+import { createServer } from 'http';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { execute, subscribe } from 'graphql';
+import { SubscriptionServer } from 'subscriptions-transport-ws';
 
 env.config();
 
 const PORT = process.env.PORT || 5000;
-
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  formatError: handleGraphQLErrorFn,
-  context: (context) => context,
-});
 
 async function start(): Promise<void> {
   try {
@@ -28,14 +25,49 @@ async function start(): Promise<void> {
       useUnifiedTopology: true,
       useCreateIndex: true,
     });
-    await server.start();
+    const schema = makeExecutableSchema({ typeDefs, resolvers });
+
+    const server = new ApolloServer({
+      schema,
+      formatError: handleGraphQLErrorFn,
+      context: (context) => context,
+      plugins: [
+        {
+          async serverWillStart() {
+            return {
+              async drainServer() {
+                subscriptionServer.close();
+              },
+            };
+          },
+        },
+      ],
+    });
+
     const app: express.Application = express();
+    const httpServer = createServer(app);
+
+    const subscriptionServer = SubscriptionServer.create(
+      {
+        schema,
+        execute,
+        subscribe,
+      },
+      {
+        server: httpServer,
+        path: server.graphqlPath,
+      }
+    );
+
+    await server.start();
+
     app.use(
       cors({
         credentials: true,
         origin: config.clientUrl,
       })
     );
+
     app.use(express.json());
     app.use(cookieParser());
     app.use(express.json({ limit: '50mb' }));
@@ -50,7 +82,7 @@ async function start(): Promise<void> {
         origin: config.clientUrl,
       },
     });
-    app.listen(PORT, () => {
+    httpServer.listen(PORT, () => {
       console.log(`App started on port ${PORT}`);
     });
   } catch (e) {
