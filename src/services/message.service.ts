@@ -49,7 +49,7 @@ export class MessageService {
     return MessageService.getUserContacts(user);
   }
 
-  public static async sendMessage(userId: string, { text, contactId, file }: INewMessage): Promise<void> {
+  public static async sendMessage(userId: string, { text, contactId, file }: INewMessage): Promise<IMessage> {
     const user: MDocument<IUser> = await UserModel.findById(userId);
     const userContact: MDocument<IContactDB> = await ContactModel.findById(contactId);
     const companion: MDocument<IUser> = await UserModel.findById(userContact.user);
@@ -68,12 +68,13 @@ export class MessageService {
       await userContact.save();
       await companionContact.save();
     }
-    const dialog: MDocument<IDialogInDB> = await DialogModel.findById(userContact.dialog);
+    const dialog = await DialogModel.findById(userContact.dialog);
     const dateTime = new Date().toISOString();
     const message = new MessageModel({ text, file, dateTime, sender: userId });
     dialog.messages.push(message.id);
     await dialog.save();
     await message.save();
+    return new MessageData(message);
   }
 
   public static async getMessages(userId: string, contactId: string): Promise<IMessage[]> {

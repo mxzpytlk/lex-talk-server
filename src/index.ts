@@ -55,7 +55,7 @@ async function start(): Promise<void> {
       },
       {
         server: httpServer,
-        path: server.graphqlPath,
+        path: '/subscription',
       }
     );
 

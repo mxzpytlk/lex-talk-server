@@ -1,4 +1,5 @@
 import { Schema, model, Types } from 'mongoose';
+import { IMessageInDb } from '../core/data/message';
 
 const schema = new Schema({
   dateTime: {
@@ -17,4 +18,4 @@ const schema = new Schema({
   },
 });
 
-export const MessageModel = model('Message', schema);
+export const MessageModel = model<IMessageInDb>('Message', schema);

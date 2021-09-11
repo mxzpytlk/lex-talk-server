@@ -9,8 +9,10 @@ import { updateUser } from './mutations/update-user.mutation';
 import { contacts } from './queries/contacts.query';
 import { sendMessage } from './mutations/send-message.mutation';
 import { messages } from './queries/messages.query';
+import { messageSent } from './subscriptions/message-sent.subscription';
+import { IExecutableSchemaDefinition } from '@graphql-tools/schema';
 
-export const resolvers = {
+export const resolvers: IExecutableSchemaDefinition['resolvers'] = {
   Query: {
     getConfig,
     login,
@@ -25,5 +27,8 @@ export const resolvers = {
     updateConfig,
     updateUser,
     sendMessage,
+  },
+  Subscription: {
+    messageSent,
   },
 };
