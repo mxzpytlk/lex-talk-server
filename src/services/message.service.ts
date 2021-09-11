@@ -4,7 +4,7 @@ import { MDocument } from '../core/types';
 import { IUser } from '../core/data/user';
 import { ContactData, IContact, IContactDB } from '../core/data/contact';
 import { ErrorService } from '../core/exceptions/api.error';
-import { IMessage, IMessageInDb, INewMessage, MessageData } from '../core/data/message';
+import { IMessage, IMessageInDb, INewMessage, MessageData, RecievedMessage } from '../core/data/message';
 import { DialogModel } from '../models/dialog.model';
 import { IDialogInDB } from '../core/data/dialog';
 import { MessageModel } from '../models/message.model';
@@ -49,10 +49,10 @@ export class MessageService {
     return MessageService.getUserContacts(user);
   }
 
-  public static async sendMessage(userId: string, { text, contactId, file }: INewMessage): Promise<IMessage> {
+  public static async sendMessage(userId: string, { text, contactId, file }: INewMessage): Promise<RecievedMessage> {
     const user: MDocument<IUser> = await UserModel.findById(userId);
     const userContact: MDocument<IContactDB> = await ContactModel.findById(contactId);
-    const companion: MDocument<IUser> = await UserModel.findById(userContact.user);
+    const companion = await UserModel.findById(userContact.user);
     let companionContact = await MessageService.getUserContact(companion, user);
     if (!companionContact) {
       companionContact = new ContactModel({ user: user._id });
@@ -74,7 +74,11 @@ export class MessageService {
     dialog.messages.push(message.id);
     await dialog.save();
     await message.save();
-    return new MessageData(message);
+    const recievedMessage: RecievedMessage = {
+      message: new MessageData(message),
+      recieverId: companion._id.toString(),
+    };
+    return recievedMessage;
   }
 
   public static async getMessages(userId: string, contactId: string): Promise<IMessage[]> {

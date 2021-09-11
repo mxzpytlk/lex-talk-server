@@ -26,6 +26,11 @@ export interface IMessage {
   sender: string;
 }
 
+export type RecievedMessage = {
+  message: IMessage;
+  recieverId: string;
+};
+
 export class MessageData implements IMessage {
   constructor(private message: IMessageInDb) {}
 

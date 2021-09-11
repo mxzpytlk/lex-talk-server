@@ -7,12 +7,12 @@ import cookieParser from 'cookie-parser';
 import router from './route/index';
 import { handleGraphQLErrorFn } from './midlewares/error.middleware';
 import { ApolloServer } from 'apollo-server-express';
-import { typeDefs } from './shema/types';
-import { resolvers } from './shema/resolvers';
+import { schema } from './shema/schema';
 import { createServer } from 'http';
-import { makeExecutableSchema } from '@graphql-tools/schema';
 import { execute, subscribe } from 'graphql';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
+import { SubscriptionConnectionParams } from './core/types';
+import { checkAuth } from './midlewares/check-auth';
 
 env.config();
 
@@ -25,7 +25,6 @@ async function start(): Promise<void> {
       useUnifiedTopology: true,
       useCreateIndex: true,
     });
-    const schema = makeExecutableSchema({ typeDefs, resolvers });
 
     const server = new ApolloServer({
       schema,
@@ -52,6 +51,10 @@ async function start(): Promise<void> {
         schema,
         execute,
         subscribe,
+        onConnect({ authorization }: SubscriptionConnectionParams) {
+          const user = checkAuth(authorization);
+          return user;
+        },
       },
       {
         server: httpServer,

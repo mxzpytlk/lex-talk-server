@@ -12,7 +12,8 @@ export const sendMessage: SendMessageResolve = async (_parent, data, { req }) =>
   const message = await MessageService.sendMessage(user.id, data);
 
   pubsub.publish(SubscriptionTypes.MESSAGE_SENT, {
-    messageSent: message,
+    messageSent: message.message,
+    recieverId: message.recieverId,
   });
   return true;
 };

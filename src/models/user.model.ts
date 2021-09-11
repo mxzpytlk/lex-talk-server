@@ -1,4 +1,5 @@
 import { Schema, model, Types } from 'mongoose';
+import { IUser } from '../core/data/user';
 
 const schema = new Schema({
   password: {
@@ -21,4 +22,4 @@ const schema = new Schema({
   contacts: { type: [Types.ObjectId], ref: 'Contact', required: true },
 });
 
-export const UserModel = model('User', schema);
+export const UserModel = model<IUser>('User', schema);

@@ -4,9 +4,9 @@ import { IUser } from '../core/data/user';
 import { ErrorService } from '../core/exceptions/api.error';
 import { TokenService } from '../services/token.service';
 
-export function checkAuth(req: Request): IUser {
+export function checkAuth(auth: Request | string): IUser {
   try {
-    const authHeader = req.headers.authorization;
+    const authHeader = typeof auth === 'string' ? auth : auth.headers.authorization;
     if (!authHeader) {
       throw new AuthenticationError('User is unauthorised');
     }
